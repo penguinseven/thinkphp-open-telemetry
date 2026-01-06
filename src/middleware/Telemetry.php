@@ -17,7 +17,7 @@ class Telemetry
     {
         $openTelemetryService = app(OpenTelemetry::class);
 
-        $span = $openTelemetryService->startSpan($request->baseUrl() . ' Telemetry.php' . $request->method(), [
+        $span = $openTelemetryService->startSpan($request->baseUrl() . ' ' . $request->method(), [
             'http.method'         => $request->method(),
             'http.url'            => $request->url(),
             'http.route'          => $request->baseUrl(),
