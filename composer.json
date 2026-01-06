@@ -16,6 +16,13 @@
             "tpOpenTelemetry\\": "src/"
         }
     },
+    "extra": {
+        "think": {
+            "config":{
+                "open_telemetry": "src/config/open_telemetry.php"
+            }
+        }
+    },
     "authors": [
         {
             "name": "PgSeven",

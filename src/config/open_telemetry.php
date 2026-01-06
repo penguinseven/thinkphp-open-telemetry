@@ -1,6 +1,5 @@
 <?php
 // config/open_telemetry.php
-use app\common\constants\GeneralConstants;
 
 return [
     'enabled' => env('OTEL_ENABLED', true),
