@@ -7,7 +7,7 @@ use GuzzleHttp\Exception\GuzzleException;
 use LogTrace\TraceId;
 use think\facade\Log;
 
-class OpenTelemetryService
+class OpenTelemetry
 {
     private $client;
     private $endpoint;

@@ -1,8 +1,7 @@
 <?php
-// app/middleware/TelemetryMiddleware.php
-namespace app\common\middleware;
+namespace tpOpenTelemetry\middleware;
 
-use app\common\service\SigNoZService;
+use tpOpenTelemetry\service\OpenTelemetry;
 use think\Request;
 use think\Response;
 
@@ -16,9 +15,9 @@ class Telemetry
      */
     public function handle(Request $request, \Closure $next)
     {
-        $sigNoZService = app(SigNoZService::class);
+        $openTelemetryService = app(OpenTelemetry::class);
 
-        $span = $sigNoZService->startSpan($request->baseUrl() . ' ' . $request->method(), [
+        $span = $openTelemetryService->startSpan($request->baseUrl() . ' Telemetry.php' . $request->method(), [
             'http.method'         => $request->method(),
             'http.url'            => $request->url(),
             'http.route'          => $request->baseUrl(),
@@ -79,7 +78,7 @@ class Telemetry
                 ];
                 
                 // 记录错误日志
-                $sigNoZService->log('ERROR', $e->getMessage(), [
+                $openTelemetryService->log('ERROR', $e->getMessage(), [
                     'error.type' => get_class($e),
                     'error.file' => $e->getFile(),
                     'error.line' => $e->getLine(),
@@ -90,7 +89,7 @@ class Telemetry
             throw $e;
         } finally {
             if ($span) {
-                $sigNoZService->endSpan($span);
+                $openTelemetryService->endSpan($span);
             }
         }
     }

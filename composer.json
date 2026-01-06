@@ -7,13 +7,13 @@
     },
     "require-dev": {
         "topthink/framework": "^6.0.0",
-        "mockery/mockery": "^1.3.0",
-        "phpunit/phpunit": "^8.5.0"
+        "phpunit/phpunit": "^8.5.0",
+        "zhongshaofa/thinkphp-log-trace": "^1.0"
     },
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "thinkphp-open-telemetry\\": "src/"
+            "tpOpenTelemetry\\": "src/"
         }
     },
     "authors": [
