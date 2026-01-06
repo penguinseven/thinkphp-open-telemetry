@@ -6,7 +6,7 @@
         "ext-json": "*"
     },
     "require-dev": {
-        "topthink/framework": "^6.0.0",
+        "topthink/framework": "^6.1",
         "phpunit/phpunit": "^8.5.0",
         "zhongshaofa/thinkphp-log-trace": "^1.0"
     },
