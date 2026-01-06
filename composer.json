@@ -1,0 +1,25 @@
+{
+    "name": "penguin-seven/thinkphp-open-telemetry",
+    "description": "OpenTelemetry instrumentation for thinkphp",
+    "require": {
+        "php": ">=7.1.0",
+        "ext-json": "*"
+    },
+    "require-dev": {
+        "topthink/framework": "^6.0.0",
+        "mockery/mockery": "^1.3.0",
+        "phpunit/phpunit": "^8.5.0"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "thinkphp-open-telemetry\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "PgSeven",
+            "email": "penguinseven@126.com"
+        }
+    ]
+}
