@@ -1,0 +1,1 @@
+{"version":1,"defects":{"Tests\\OpenTelemetryTest::testStartSpan":4,"Tests\\OpenTelemetryTest::testEndSpan":4,"Tests\\OpenTelemetryTest::testLog":4},"times":{"Tests\\OpenTelemetryTest::testStartSpan":0.897,"Tests\\OpenTelemetryTest::testEndSpan":0.075,"Tests\\OpenTelemetryTest::testLog":0.003,"Tests\\TelemetryTest::testHandle":0.028}}

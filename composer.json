@@ -3,7 +3,8 @@
     "description": "OpenTelemetry instrumentation for thinkphp",
     "require": {
         "php": ">=7.1.0",
-        "ext-json": "*"
+        "ext-json": "*",
+        "guzzlehttp/guzzle": "^6.3|^7.0"
     },
     "require-dev": {
         "topthink/framework": "^6.1",
@@ -14,6 +15,11 @@
     "autoload": {
         "psr-4": {
             "tpOpenTelemetry\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
         }
     },
     "extra": {

@@ -17,7 +17,7 @@ class OpenTelemetry
     private $tracesId;
     private $spanId;
 
-    public function __construct()
+    public function __construct(Client $client = null)
     {
         $this->enabled = config('open_telemetry.enabled', true);
         $this->endpoint = config('open_telemetry.endpoint', 'http://localhost:4318');
@@ -25,7 +25,7 @@ class OpenTelemetry
 
         $this->setTraceId(TraceId::getTraceId());
 
-        $this->client = new Client([
+        $this->client = $client ?: new Client([
             'timeout' => 0.01, // 增加超时时间以避免请求失败
             'headers' => [
                 'Content-Type' => 'application/json',
