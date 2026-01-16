@@ -10,6 +10,8 @@ use think\Log;
 
 class TestCase extends BaseTestCase
 {
+    protected $app;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -21,7 +23,9 @@ class TestCase extends BaseTestCase
         }
         
         // Ensure Container instance is set
-        $container = Container::getInstance();
+        $this->app = Container::getInstance();
+        
+        $container = $this->app;
         
         // Mock Config
         // In ThinkPHP 6, Config is a class, not just a simple array.

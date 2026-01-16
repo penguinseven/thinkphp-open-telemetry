@@ -16,8 +16,9 @@ class OpenTelemetry
 
     private $tracesId;
     private $spanId;
+    private $currentSpan;
 
-    public function __construct(Client $client = null)
+    public function __construct($client = null)
     {
         $this->enabled = config('open_telemetry.enabled', true);
         $this->endpoint = config('open_telemetry.endpoint', 'http://localhost:4318');
@@ -26,10 +27,12 @@ class OpenTelemetry
         $this->setTraceId(TraceId::getTraceId());
 
         $this->client = $client ?: new Client([
-            'timeout' => 0.01, // 增加超时时间以避免请求失败
+            'timeout' => 1.0, // Increase timeout for better reliability
             'headers' => [
                 'Content-Type' => 'application/json',
+                'Connection' => 'keep-alive',
             ],
+            'http_version' => '1.1',
         ]);
     }
 
@@ -169,9 +172,12 @@ class OpenTelemetry
             return null;
         }
 
+        // Generate a new Span ID for every startSpan call
+        $this->spanId = bin2hex(random_bytes(8));
+
         $spanData = [
             'trace_id'             => $this->getTraceId(),
-            'span_id'              => $this->getSpanId(),
+            'span_id'              => $this->spanId,
             'name'                 => $name,
             'kind'                 => 1, // SERVER
             'start_time_unix_nano' => (int)(microtime(true) * 1000000000),
@@ -193,11 +199,26 @@ class OpenTelemetry
         return $spanData;
     }
 
+    public function getCurrentSpan()
+    {
+        return $this->currentSpan;
+    }
+
+    public function setCurrentSpan($span)
+    {
+        $this->currentSpan = $span;
+    }
+
     /**
      * 结束一个Span
      */
-    public function endSpan($spanData)
+    public function endSpan($spanData = null)
     {
+        if ($spanData === null) {
+            $spanData = $this->currentSpan;
+            $this->currentSpan = null;
+        }
+
         if (!$this->enabled || !$spanData) {
             return;
         }
