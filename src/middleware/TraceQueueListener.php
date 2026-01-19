@@ -28,7 +28,7 @@ class TraceQueueListener
         $service = app(OpenTelemetry::class);
         $job = $event->job;
         
-        $payload = $job->payload();
+        $payload = $job->payload('data');
         $traceId = $payload['trace_id'] ?? null;
         $parentSpanId = $payload['span_id'] ?? null;
 
