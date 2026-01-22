@@ -85,3 +85,33 @@ try {
     $otel->endSpan($span);
 }
 ```
+
+
+### 4. Infrastructure 监控对接
+
+SigNoz 的 Infrastructure 监控需要采集服务器（主机）的指标（如 CPU、内存、磁盘 IO 等）。这不能仅通过 PHP 代码完成，需要在服务器上运行 **OpenTelemetry Collector**。
+
+本扩展包会自动上报 `host.name` 属性，使得 SigNoz 可以将 PHP 的 Trace 数据与 Infrastructure 指标关联起来。
+
+- 对接步骤
+
+1. **在服务器上安装 OpenTelemetry Collector**
+   
+   请参考 SigNoz 官方文档安装 Collector（通常作为 Agent 运行在每台服务器上）：
+   [SigNoz - Send Host Metrics](https://signoz.io/docs/userguide/send-host-metrics/)
+
+2. **确保 Host Name 一致**
+
+   本扩展包默认使用 `php_uname('n')` 作为 `host.name` 上报。
+   请确保您服务器上运行的 OTel Collector 配置中，`hostmetrics` 接收器采集的主机名与 PHP 所在环境的主机名一致。
+
+   如果运行在 Docker 容器中，建议将宿主机的主机名挂载或传递给容器，或者在 `config/open_telemetry.php` 中手动指定（需修改代码支持自定义 resource attributes，目前默认使用系统主机名）。
+
+3. **应用层资源监控**
+
+   本扩展包会在每个 Root Span（请求入口）结束时，自动记录当前 PHP 进程的内存使用情况：
+   - `process.memory.usage`: 当前分配的内存量 (bytes)
+   - `process.memory.peak_usage`: 内存使用峰值 (bytes)
+
+   您可以在 SigNoz 的 Trace 详情中查看这些属性，或基于这些属性创建自定义仪表盘。
+

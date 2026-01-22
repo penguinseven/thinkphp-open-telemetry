@@ -224,6 +224,20 @@ class OpenTelemetry
         }
 
         $spanData['end_time_unix_nano'] = (int)(microtime(true) * 1000000000);
+
+        // 如果是 Root Span (没有父 Span)，记录内存使用情况
+        if (!isset($spanData['parent_span_id'])) {
+            $spanData['attributes'][] = [
+                'key' => 'process.memory.usage',
+                'value' => ['intValue' => memory_get_usage(true)],
+            ];
+            $spanData['attributes'][] = [
+                'key' => 'process.memory.peak_usage',
+                'value' => ['intValue' => memory_get_peak_usage(true)],
+            ];
+        }
+
+        // Add duration attribute for convenience
         $duration = ($spanData['end_time_unix_nano'] - $spanData['start_time_unix_nano']) / 1000000; // Duration in milliseconds
         $spanData['attributes'][] = [
             'key' => 'http.duration_ms',
