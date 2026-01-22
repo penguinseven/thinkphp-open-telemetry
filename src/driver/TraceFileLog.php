@@ -23,7 +23,7 @@ class TraceFileLog extends File implements LogHandlerInterface
     public function __construct(App $app, array $config = [])
     {
         parent::__construct($app, $config);
-        $this->OpenTelemetryService = app(OpenTelemetry::class);
+        $this->openTelemetryService = app(OpenTelemetry::class);
     }
 
     /**
@@ -104,7 +104,7 @@ class TraceFileLog extends File implements LogHandlerInterface
             $logBody = is_array($message) ? json_encode($message) : (string)$message;
 
             // 发送日志到SigNoZ
-            $this->OpenTelemetryService->log($level, $logBody);
+            $this->openTelemetryService->log($level, $logBody);
         } catch (\Exception $e) {
             // 如果推送失败，记录错误但不影响主流程
             error_log('Failed to push log to SigNoZ: ' . $e->getMessage());
