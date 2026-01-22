@@ -24,6 +24,8 @@ return [
     'enabled' => env('OTEL_ENABLED', true),
     'endpoint' => env('OTEL_EXPORTER_OTLP_ENDPOINT', 'http://localhost:4318'),
     'service_name' => env('OTEL_SERVICE_NAME', 'thinkphp-app'),
+    // 可选：指定主机名，用于与 Infrastructure 监控关联。默认使用 php_uname('n')
+    'host_name' => env('OTEL_RESOURCE_ATTRIBUTES_HOST_NAME', php_uname('n')),
 ];
 ```
 
@@ -93,19 +95,39 @@ SigNoz 的 Infrastructure 监控需要采集服务器（主机）的指标（如
 
 本扩展包会自动上报 `host.name` 属性，使得 SigNoz 可以将 PHP 的 Trace 数据与 Infrastructure 指标关联起来。
 
-- 对接步骤
+### 对接步骤
 
-1. **在服务器上安装 OpenTelemetry Collector**
+1. **部署 OpenTelemetry Collector (Host Metrics)**
    
-   请参考 SigNoz 官方文档安装 Collector（通常作为 Agent 运行在每台服务器上）：
-   [SigNoz - Send Host Metrics](https://signoz.io/docs/userguide/send-host-metrics/)
+   为了方便部署，本项目提供了 Docker Compose 示例配置。
+   
+   请查看目录：`examples/host-metrics/`
+   
+   - `otel-collector-config.yaml`: 包含 `hostmetrics` 接收器的完整配置
+   - `docker-compose.yaml`: 一键启动 Collector 的配置
+   
+   **快速启动：**
+   ```bash
+   cd examples/host-metrics
+   docker-compose up -d
+   ```
+   
+   该 Collector 会采集主机的 CPU、内存、磁盘等指标，并上报给 SigNoz。
+   *注意：请修改 `otel-collector-config.yaml` 中的 endpoint 指向您的 SigNoz 服务地址。*
 
 2. **确保 Host Name 一致**
 
-   本扩展包默认使用 `php_uname('n')` 作为 `host.name` 上报。
-   请确保您服务器上运行的 OTel Collector 配置中，`hostmetrics` 接收器采集的主机名与 PHP 所在环境的主机名一致。
-
-   如果运行在 Docker 容器中，建议将宿主机的主机名挂载或传递给容器，或者在 `config/open_telemetry.php` 中手动指定（需修改代码支持自定义 resource attributes，目前默认使用系统主机名）。
+   SigNoz 通过 `host.name` 关联 Trace 和 Host Metrics。
+   
+   - **Host Metrics Collector**: 默认会上报宿主机的主机名。
+   - **PHP 应用**: 默认使用 `php_uname('n')`。
+   
+   如果 PHP 运行在 Docker 容器中，容器的主机名（Container ID）通常与宿主机不同。
+   为了实现关联，请在 `config/open_telemetry.php` 中配置 `host_name`，使其与宿主机一致：
+   
+   ```php
+   'host_name' => 'your-host-name', // 或者通过环境变量 OTEL_RESOURCE_ATTRIBUTES_HOST_NAME 注入
+   ```
 
 3. **应用层资源监控**
 

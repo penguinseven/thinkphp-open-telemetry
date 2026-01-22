@@ -12,6 +12,7 @@ class OpenTelemetry
     private $client;
     private $endpoint;
     private $serviceName;
+    private $hostName;
     private $enabled;
 
     private $tracesId;
@@ -23,6 +24,7 @@ class OpenTelemetry
         $this->enabled = config('open_telemetry.enabled', true);
         $this->endpoint = config('open_telemetry.endpoint', 'http://localhost:4318');
         $this->serviceName = config('open_telemetry.service_name', 'thinkphp-api');
+        $this->hostName = config('open_telemetry.host_name', php_uname('n'));
 
         $this->setTraceId(TraceId::getTraceId());
 
@@ -72,7 +74,7 @@ class OpenTelemetry
                             ],
                             [
                                 'key' => 'host.name',
-                                'value' => ['stringValue' => php_uname('n')],
+                                'value' => ['stringValue' => $this->hostName],
                             ],
                             [
                                 'key' => 'host.arch',
@@ -283,7 +285,7 @@ class OpenTelemetry
         $request = request();
         $attributes = array_merge([
             'level'        => $severityText,
-            'host.name'    => php_uname('n'),
+            'host.name'    => $this->hostName,
             'php.version'  => phpversion(),
             'service.name' => $this->serviceName,
             'http.method' => $request->method(),

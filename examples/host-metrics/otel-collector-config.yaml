@@ -1,0 +1,58 @@
+receivers:
+  hostmetrics:
+    collection_interval: 30s
+    root_path: /hostfs
+    scrapers:
+      cpu: {}
+      disk: {}
+      load: {}
+      filesystem: {}
+      memory: {}
+      network: {}
+      paging: {}
+      process:
+        mute_process_name_error: true
+        mute_process_exe_error: true
+        mute_process_io_error: true
+      processes: {}
+  
+  # Allow this collector to also receive traces/logs from your PHP app
+  otlp:
+    protocols:
+      grpc:
+        endpoint: "0.0.0.0:4317"
+      http:
+        endpoint: "0.0.0.0:4318"
+
+processors:
+  batch:
+  resourcedetection:
+    detectors: [env, system]
+    # system detector will add host.name, os.type, etc.
+
+exporters:
+  # Export to SigNoz Backend
+  otlp:
+    # CHANGE THIS: Point to your SigNoz backend
+    # Self-Hosted Example: "http://<signoz-host-ip>:4317"
+    # Cloud Example: "ingest.<region>.signoz.cloud:443"
+    endpoint: "http://localhost:4317"
+    tls:
+      insecure: true
+    # headers:
+    #   "signoz-ingestion-key": "<your-ingestion-key>"
+
+service:
+  pipelines:
+    metrics:
+      receivers: [hostmetrics]
+      processors: [resourcedetection, batch]
+      exporters: [otlp]
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlp]
+    logs:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlp]

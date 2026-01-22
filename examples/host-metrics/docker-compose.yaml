@@ -1,0 +1,20 @@
+version: "3"
+services:
+  otel-collector:
+    image: signoz/signoz-otel-collector:latest
+    container_name: otel-collector-hostmetrics
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
+      # Mount host filesystem to allow reading host metrics
+      - /:/hostfs:ro
+    environment:
+      # Optional: Override host name if needed
+      # - OTEL_RESOURCE_ATTRIBUTES=host.name=my-production-server
+      - LOW_MEMORY_MODE=false
+    # Network mode host is required for accurate network metrics
+    network_mode: host
+    # PID host is required for accurate process metrics
+    pid: host
+    privileged: true
+    restart: always
